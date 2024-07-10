@@ -58,8 +58,5 @@ def ReleaseKey(hexKeyCode):
 # directx scan codes http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
 
 if __name__  == '__main__':
-    while (True):
-        PressKey(W)
-        time.sleep(1)
-        ReleaseKey(W)
-        time.sleep(1)
+    while (False):
+        pass

@@ -8,20 +8,36 @@ import time
 from directKeys import PressKey, ReleaseKey, W, A, S, D
 
 
+import pyautogui
+import pydirectinput
+
 up = 0xC8
-down = 0xD0
-left = 0xCB
-right = 0xCD
+L = 0x1E
+R = 0x20
 X = 0x2D
 
 # source activate base && conda activate nfs
 
+def straight():
+    pydirectinput.keyDown('w')
+    pydirectinput.keyUp('a')
+    pydirectinput.keyUp('d')
+
+def left():
+    pydirectinput.keyDown('a')
+    pydirectinput.keyDown('w')
+    pydirectinput.keyUp('d')
+
+def right():
+    pydirectinput.keyDown('d')
+    pydirectinput.keyUp('a')
+    pydirectinput.keyDown('w')
+
 def reset():
-    ReleaseKey(0xCD) # right
-    ReleaseKey(0xCB) # left
-    ReleaseKey(0xC8) # up
-    ReleaseKey(0xD0) # down
-    ReleaseKey(X)
+    pydirectinput.keyUp('w')
+    pydirectinput.keyUp('a')
+    pydirectinput.keyUp('d')
+
 
 
 def calculate_lanes(img, lines, color=[0, 255, 255], thickness=3):
@@ -61,16 +77,12 @@ def calculate_lanes(img, lines, color=[0, 255, 255], thickness=3):
                     x2 = (max_y - b) / m
 
                 slopes.append(m)
-                if m > 0.7:
-                    line_dict[idx] = []
-                else:
-                    line_dict[idx] = [m,b,[int(x1), min_y, int(x2), max_y]]
-
+                line_dict[idx] = [m,b,[int(x1), min_y, int(x2), max_y]]
                 new_lines.append([int(x1), min_y, int(x2), max_y])
 
         final_lanes = {}
 
-        print(min(slopes), max(slopes))
+        # print(min(slopes), max(slopes))
 
         for idx in line_dict:
             final_lanes_copy = final_lanes.copy()
@@ -120,7 +132,7 @@ def calculate_lanes(img, lines, color=[0, 255, 255], thickness=3):
         l1_x1, l1_y1, l1_x2, l1_y2 = average_lane(final_lanes[lane1_id])
         l2_x1, l2_y1, l2_x2, l2_y2 = average_lane(final_lanes[lane2_id])
 
-        return [l1_x1, l1_y1, l1_x2, l1_y2], [l2_x1, l2_y1, l2_x2, l2_y2]
+        return [l1_x1, l1_y1, l1_x2, l1_y2], [l2_x1, l2_y1, l2_x2, l2_y2], lane1_id, lane2_id
 
 
     except Exception as e:
@@ -143,10 +155,12 @@ def process_img(image):
     # more info: http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_houghlines/py_houghlines.html
     #                                     rho   theta   thresh  min length, max gap:        
     lines = cv2.HoughLinesP(processed_img, 1, np.pi/180, 180, np.array([]),      100,       5)
+    m1 = 0
+    m2 = 0
     try:
-        l1, l2 = calculate_lanes(original_image,lines)
-        cv2.line(original_image, (l1[0], l1[1]), (l1[2], l1[3]), [0,255,0], 30)
-        cv2.line(original_image, (l2[0], l2[1]), (l2[2], l2[3]), [0,255,0], 30)
+        l1, l2, m1, m2 = calculate_lanes(original_image,lines)
+        cv2.line(original_image, (l1[0], l1[1]), (l1[2], l1[3]), [0,255,0], 20)
+        cv2.line(original_image, (l2[0], l2[1]), (l2[2], l2[3]), [0,255,0], 20)
     except Exception as e:
         print(str(e))
         pass
@@ -162,7 +176,7 @@ def process_img(image):
     except Exception as e:
         pass
 
-    return processed_img,original_image
+    return processed_img,original_image, m1, m2
 
 def roi(img, vertices):
     mask = np.zeros_like(img)
@@ -170,24 +184,31 @@ def roi(img, vertices):
     masked = cv2.bitwise_and(img, mask)
     return masked
 
+for i in list(range(4))[::-1]:
+    print(i+1)
+    time.sleep(1)
 
-print('Starting....')
 last_time = time.time()
 while True:
     screen =  np.array(ImageGrab.grab(bbox=(0, 30, 800, 630)))
     print('Frame took {} seconds'.format(time.time()-last_time))
     last_time = time.time()
 
-    print('Pressing Up')
-    PressKey(up)
-    time.sleep(0.01)
-    print('Releasing Up')
-    ReleaseKey(up)
-
-    new_screen,original_image = process_img(screen)
+    new_screen,original_image, m1, m2 = process_img(screen)
     cv2.imshow('window', new_screen)
     cv2.imshow('window2',cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB))
+
+    # Car Controls
+    if m1 < 0 and m2 < 0:
+        print('RIGHT')
+        right()
+    elif m1 > 0 and m2 > 0:
+        print('LEFT')
+        left()
+    else:
+        print('UP')
+        straight()
+
     if cv2.waitKey(25) & 0xFF == ord('q'):
         cv2.destroyAllWindows()
         break
-88888888888
