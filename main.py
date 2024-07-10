@@ -23,14 +23,6 @@ def reset():
     ReleaseKey(0xD0) # down
     ReleaseKey(X)
 
-# def draw_lines(img, lines):
-#     try:
-#         for line in lines:
-#             coords = line[0]
-#             cv2.line(img, (coords[0], coords[1]), (coords[2], coords[3]), [0, 0, 255], 3)
-#     except:
-#         pass
-
 
 def calculate_lanes(img, lines, color=[0, 255, 255], thickness=3):
 
@@ -48,6 +40,7 @@ def calculate_lanes(img, lines, color=[0, 255, 255], thickness=3):
         max_y = 600
         new_lines = []
         line_dict = {}
+        slopes = []
 
         for idx,i in enumerate(lines):
             for xyxy in i:
@@ -67,10 +60,17 @@ def calculate_lanes(img, lines, color=[0, 255, 255], thickness=3):
                     x1 = (min_y - b) / m
                     x2 = (max_y - b) / m
 
-                line_dict[idx] = [m,b,[int(x1), min_y, int(x2), max_y]]
+                slopes.append(m)
+                if m > 0.7:
+                    line_dict[idx] = []
+                else:
+                    line_dict[idx] = [m,b,[int(x1), min_y, int(x2), max_y]]
+
                 new_lines.append([int(x1), min_y, int(x2), max_y])
 
         final_lanes = {}
+
+        print(min(slopes), max(slopes))
 
         for idx in line_dict:
             final_lanes_copy = final_lanes.copy()
@@ -142,7 +142,7 @@ def process_img(image):
 
     # more info: http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_houghlines/py_houghlines.html
     #                                     rho   theta   thresh  min length, max gap:        
-    lines = cv2.HoughLinesP(processed_img, 1, np.pi/180, 180,      20,       15)
+    lines = cv2.HoughLinesP(processed_img, 1, np.pi/180, 180, np.array([]),      100,       5)
     try:
         l1, l2 = calculate_lanes(original_image,lines)
         cv2.line(original_image, (l1[0], l1[1]), (l1[2], l1[3]), [0,255,0], 30)
@@ -154,7 +154,7 @@ def process_img(image):
         for coords in lines:
             coords = coords[0]
             try:
-                cv2.line(processed_img, (coords[0], coords[1]), (coords[2], coords[3]), [255,0,0], 3)
+                cv2.line(processed_img, (coords[0], coords[1]), (coords[2], coords[3]), [255,0,0], 2)
                 
                 
             except Exception as e:
@@ -177,22 +177,17 @@ while True:
     screen =  np.array(ImageGrab.grab(bbox=(0, 30, 800, 630)))
     print('Frame took {} seconds'.format(time.time()-last_time))
     last_time = time.time()
+
+    print('Pressing Up')
+    PressKey(up)
+    time.sleep(0.01)
+    print('Releasing Up')
+    ReleaseKey(up)
+
     new_screen,original_image = process_img(screen)
     cv2.imshow('window', new_screen)
     cv2.imshow('window2',cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB))
-    #cv2.imshow('window',cv2.cvtColor(screen, cv2.COLOR_BGR2RGB))
     if cv2.waitKey(25) & 0xFF == ord('q'):
         cv2.destroyAllWindows()
         break
-
-
-    # print('Pressing Up')
-    # PressKey(up)
-    # time.sleep(0.01)
-    # print('Releasing Up')
-    # ReleaseKey(up)
-
-
-
-
-
+88888888888
