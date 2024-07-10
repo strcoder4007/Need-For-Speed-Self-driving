@@ -23,16 +23,16 @@ def reset():
     ReleaseKey(0xD0) # down
     ReleaseKey(X)
 
-def draw_lines(img, lines):
-    try:
-        for line in lines:
-            coords = line[0]
-            cv2.line(img, (coords[0], coords[1]), (coords[2], coords[3]), [255, 255, 255], 3)
-    except:
-        pass
+# def draw_lines(img, lines):
+#     try:
+#         for line in lines:
+#             coords = line[0]
+#             cv2.line(img, (coords[0], coords[1]), (coords[2], coords[3]), [0, 0, 255], 3)
+#     except:
+#         pass
 
 
-def draw_lanes(img, lines, color=[0, 255, 255], thickness=3):
+def calculate_lanes(img, lines, color=[0, 255, 255], thickness=3):
 
     # if this fails, go with some default line
     try:
@@ -60,8 +60,12 @@ def draw_lanes(img, lines, color=[0, 255, 255], thickness=3):
                 m, b = lstsq(A, y_coords)[0]
 
                 # Calculating our new, and improved, xs
-                x1 = (min_y-b) / m
-                x2 = (max_y-b) / m
+                if m == 0:
+                    x1 = min_y
+                    x2 = max_y
+                else:
+                    x1 = (min_y - b) / m
+                    x2 = (max_y - b) / m
 
                 line_dict[idx] = [m,b,[int(x1), min_y, int(x2), max_y]]
                 new_lines.append([int(x1), min_y, int(x2), max_y])
@@ -117,6 +121,8 @@ def draw_lanes(img, lines, color=[0, 255, 255], thickness=3):
         l2_x1, l2_y1, l2_x2, l2_y2 = average_lane(final_lanes[lane2_id])
 
         return [l1_x1, l1_y1, l1_x2, l1_y2], [l2_x1, l2_y1, l2_x2, l2_y2]
+
+
     except Exception as e:
         print(str(e))
 
@@ -130,8 +136,7 @@ def process_img(image):
     
     processed_img = cv2.GaussianBlur(processed_img,(5,5),0)
     
-    vertices = np.array([[10,500],[10,300],[300,200],[500,200],[800,300],[800,500],
-                         ], np.int32)
+    vertices = np.array([[10,500],[10,350],[400, 250],[800,350],[800,500]], np.int32)
 
     processed_img = roi(processed_img, [vertices])
 
@@ -139,7 +144,7 @@ def process_img(image):
     #                                     rho   theta   thresh  min length, max gap:        
     lines = cv2.HoughLinesP(processed_img, 1, np.pi/180, 180,      20,       15)
     try:
-        l1, l2 = draw_lanes(original_image,lines)
+        l1, l2 = calculate_lanes(original_image,lines)
         cv2.line(original_image, (l1[0], l1[1]), (l1[2], l1[3]), [0,255,0], 30)
         cv2.line(original_image, (l2[0], l2[1]), (l2[2], l2[3]), [0,255,0], 30)
     except Exception as e:
@@ -167,42 +172,27 @@ def roi(img, vertices):
 
 
 print('Starting....')
-
 last_time = time.time()
-
 while True:
-    screen = np.array(ImageGrab.grab(bbox=(0, 30, 800, 630)))
-    new_screen = process_img(screen)
-
-    print('Pressing Up')
-    PressKey(up)
-    time.sleep(0.01)
-    print('Releasing Up')
-    ReleaseKey(up)
-    
-
-    if np.random.randint(0, 10) > 8:
-        print('Pressing X')
-        PressKey(X)
-    
-    if np.random.randint(0, 10) > 7:
-        print('Releasing X')
-        ReleaseKey(X)
-    
-
-
-    print(f"Loop took {time.time() - last_time} seconds")
-
+    screen =  np.array(ImageGrab.grab(bbox=(0, 30, 800, 630)))
+    print('Frame took {} seconds'.format(time.time()-last_time))
     last_time = time.time()
-
+    new_screen,original_image = process_img(screen)
     cv2.imshow('window', new_screen)
-    #cv2.imshow('window', cv2.cvtColor(screen, cv2.COLOR_BGR2RGB))
-
-
+    cv2.imshow('window2',cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB))
+    #cv2.imshow('window',cv2.cvtColor(screen, cv2.COLOR_BGR2RGB))
     if cv2.waitKey(25) & 0xFF == ord('q'):
-        reset()
         cv2.destroyAllWindows()
         break
+
+
+    # print('Pressing Up')
+    # PressKey(up)
+    # time.sleep(0.01)
+    # print('Releasing Up')
+    # ReleaseKey(up)
+
+
 
 
 
