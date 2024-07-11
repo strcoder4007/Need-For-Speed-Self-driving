@@ -1,21 +1,35 @@
 import cv2
+import os
 import numpy as np
 import time
-# from directKeys import PressKey, ReleaseKey, W, A, S, D
-
-from grabscreen import grab_screen
-from drawlanes import draw_lanes
-
-
 import pyautogui
 import pydirectinput
 
+
+from grabscreen import grab_screen
+from drawlanes import draw_lanes
+from getkeys import key_check
+
+
+# source activate base && conda activate nfs
+# from directkeys import PressKey, ReleaseKey, W, A, S, D
 up = 0xC8
 L = 0x1E
 R = 0x20
 X = 0x2D
 
-# source activate base && conda activate nfs
+
+def keys_to_output(keys):
+    # [A, W, D]
+    output = [0, 0, 0]
+
+    if 'A' in keys:
+        output[0] = 1
+    elif 'W' in keys:
+        output[1] = 1
+    else: # D
+        output[2] = 1
+    return output
 
 def straight():
     pydirectinput.keyDown('w')
@@ -72,7 +86,6 @@ def removeHorizontalLines(lines):
                 filtered_lines.append([[x1, y1, x2, y2]])
     return filtered_lines
 
-
 def process_img(image):
     original_image = image
     # convert to gray
@@ -118,31 +131,37 @@ def roi(img, vertices):
     masked = cv2.bitwise_and(img, mask)
     return masked
 
-for i in list(range(2))[::-1]:
-    print(i+1)
-    time.sleep(1)
 
-last_time = time.time()
-while True:
-    screen = grab_screen(region=(0, 30, 800, 630))
-    print('Frame took {} seconds'.format(time.time()-last_time))
+
+def main():
+    for i in list(range(2))[::-1]:
+        print(i+1)
+        time.sleep(1)
+
     last_time = time.time()
+    while True:
+        screen = grab_screen(region=(0, 30, 800, 630))
+        print('Frame took {} seconds'.format(time.time()-last_time))
+        last_time = time.time()
 
-    new_screen, original_image, m1, m2 = process_img(screen)
-    cv2.imshow('window', new_screen)
-    cv2.imshow('window2',cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB))
+        new_screen, original_image, m1, m2 = process_img(screen)
+        cv2.imshow('window', new_screen)
+        cv2.imshow('window2',cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB))
 
-    # Car Controls
-    if m1 < 0 and m2 < 0:
-        print('RIGHT')
-        right()
-    elif m1 > 0 and m2 > 0:
-        print('LEFT')
-        left()
-    else:
-        print('UP')
-        straight()
+        # Car Controls
+        if m1 < 0 and m2 < 0:
+            print('RIGHT')
+            right()
+        elif m1 > 0 and m2 > 0:
+            print('LEFT')
+            left()
+        else:
+            print('UP')
+            straight()
 
-    if cv2.waitKey(25) & 0xFF == ord('q'):
-        cv2.destroyAllWindows()
-        break
+        if cv2.waitKey(25) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            break
+
+
+main()
