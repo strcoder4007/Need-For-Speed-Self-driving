@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Flatten, Input, BatchNormalization
 from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import SGD
 
 def alexnet(width, height, lr):
     input_layer = Input(shape=(width, height, 1))
@@ -36,7 +36,7 @@ def alexnet(width, height, lr):
     model = Model(inputs=input_layer, outputs=output_layer)
 
     # Compile the model
-    optimizer = Adam(learning_rate=lr, momentum=0.9)
+    optimizer = SGD(learning_rate=lr, momentum=0.9)
     model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
     return model

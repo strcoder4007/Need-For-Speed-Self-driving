@@ -14,8 +14,8 @@ model = alexnet(WIDTH, HEIGHT, LR)
 
 train_data = np.load('../datasets/checkpoint_balanced.npy', allow_pickle=True)
 
-train = train_data[:-500]/255.0
-test = train_data[-500:]/255.0
+train = train_data[:-500]
+test = train_data[-500:]
 
 X = np.array([i[0] for i in train]).reshape(-1, WIDTH, HEIGHT, 1)
 Y = np.array([i[1] for i in train])
@@ -31,6 +31,6 @@ model.fit(X, Y,
           callbacks=[tf.keras.callbacks.TensorBoard(log_dir='log')])
 
 # Save the model
-model.save(MODEL_NAME)
+model.save('../models/' + MODEL_NAME)
  
 # tensorboard --logdir='log'

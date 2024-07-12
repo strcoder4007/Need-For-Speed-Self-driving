@@ -42,7 +42,7 @@ def reset():
     pydirectinput.keyUp('d')
 
 model = alexnet(WIDTH, HEIGHT, LR)
-model.load_weights(MODEL_NAME)
+model.load_weights('../models/' + MODEL_NAME)
 
 
 def main():
