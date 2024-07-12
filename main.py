@@ -18,10 +18,10 @@ def keys_to_output(keys):
     output = [0, 0, 0]
     if 'A' in keys:
         output[0] = 1
-    elif 'W' in keys:
+    elif 'D' in keys:
+        output[2] = 1  
+    else: # W
         output[1] = 1
-    else: # D
-        output[2] = 1
     return output
 
 
