@@ -6,7 +6,7 @@ import cv2
 
 
 training_data_file_name = '../datasets/training_data.npy'
-checkpoint_data_file_name = '../datasets/checkpoint.npy'
+checkpoint_data_file_name = '../datasets/checkpoint_balanced.npy'
 train_data = np.load(checkpoint_data_file_name, allow_pickle=True)
 
 for data in train_data:
