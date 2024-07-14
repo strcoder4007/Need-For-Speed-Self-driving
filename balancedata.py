@@ -7,17 +7,6 @@ import cv2
 checkpoint_data_file_name = '../datasets/checkpoint.npy'
 train_data = np.load(checkpoint_data_file_name, allow_pickle=True)
 
-# for data in train_data:
-#     img = data[0]
-#     choice = data[1]
-#     cv2.imshow('test', img)
-
-#     print(choice)
-
-#     if cv2.waitKey(25) & 0xFF == ord('q'):
-#         cv2.destroyAllWindows()
-#         break
-
 
 df = pd.DataFrame(train_data)
 print(df.head())

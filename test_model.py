@@ -3,18 +3,21 @@ import os
 import numpy as np
 import time
 import pydirectinput
-from alexnet import alexnet
+from tqdm import tqdm
+# from alexnet import alexnet
+from tensorflow.keras.applications import InceptionResNetV2
 
 
 from grabscreen import grab_screen
 from getkeys import key_check
 
 
-WIDTH = 160
-HEIGHT = 120
+WIDTH = 240
+HEIGHT = 180
+CHANNELS = 3
 LR = 1e-3
 EPOCHS = 8
-MODEL_NAME = 'nfsmwai-{}-{}-{}-epochs.h5'.format(LR, 'alexnetv2', EPOCHS)
+MODEL_NAME = 'nfsmwai-{}-{}-{}-epochs.h5'.format(LR, 'InceptionResNetV2', EPOCHS)
 
 
 def straight():
@@ -41,7 +44,10 @@ def reset():
     pydirectinput.keyUp('a')
     pydirectinput.keyUp('d')
 
-model = alexnet(WIDTH, HEIGHT, LR)
+# model = alexnet(WIDTH, HEIGHT, LR)
+model = InceptionResNetV2(weights="imagenet" if settings['CNN_USE_PRETRAINED_WEIGHTS'] else None, 
+                        include_top=False, 
+                        input_shape=(WIDTH, HEIGHT, CHANNELS))
 model.load_weights('../models/' + MODEL_NAME)
 
 
@@ -55,13 +61,13 @@ def main():
     while True:
         if not paused:
             screen = grab_screen(region=(0, 30, 800, 630))
-            screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
-            screen = cv2.resize(screen, (WIDTH, HEIGHT))
+            # screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
+            screen = cv2.resize(screen, (WIDTH, HEIGHT, CHANNELS))
 
             # print('Frame took {} seconds'.format(time.time()-last_time))
             # last_time = time.time()
 
-            preds = model.predict([screen.reshape(-1, WIDTH, HEIGHT, 1)])[0]
+            preds = model.predict([screen.reshape(-1, WIDTH, HEIGHT, CHANNELS)])[0]
             moves = list(np.around(preds))
             print(moves, preds)
 

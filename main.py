@@ -5,6 +5,10 @@ import time
 import pydirectinput
 
 
+WIDTH = 240
+HEIGHT = 180
+CHANNELS = 3
+
 from grabscreen import grab_screen
 # from drawlanes import draw_lanes
 from getkeys import key_check
@@ -19,7 +23,7 @@ def keys_to_output(keys):
     if 'A' in keys:
         output[0] = 1
     elif 'D' in keys:
-        output[2] = 1  
+        output[2] = 1
     else: # W
         output[1] = 1
     return output
@@ -52,8 +56,8 @@ def main():
     last_time = time.time()
     while len(training_data) < 150000:
         screen = grab_screen(region=(0, 30, 800, 630))
-        screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
-        screen = cv2.resize(screen, (160, 120))
+        # screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
+        screen = cv2.resize(screen, (WIDTH, HEIGHT))
 
         keys = key_check()
         output = keys_to_output(keys)
@@ -62,12 +66,12 @@ def main():
         # print('Frame took {} seconds'.format(time.time()-last_time))
         # last_time = time.time()
 
-        if len(training_data) % 500 == 0:
+        if len(training_data) % 2000 == 0:
             print(len(training_data))
             np.save(file_name, np.array(training_data, dtype=object))
 
 
-        if len(training_data) % 10000 == 0:
+        if len(training_data) % 20000 == 0:
             print(f'Saving checkpoint at {len(training_data)}')
             np.save(checkpoint_data_file_name, np.array(training_data, dtype=object))
 

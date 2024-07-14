@@ -16,16 +16,18 @@ I collected 200,000 images with their corresponding labels i.e keys `w`, `a`, `d
 
 
 ## Training
-The model is a AlexNet model. I trained it on 200,000 images.
-In total it took around 18 hours of training on a local Nvidia RTX 4070 Ti Super (16GB). 
+The model was first trained using AlexNet model. Later found out `InceptionResNetV2` performs better and goes deeper to find the artifacts. I trained it on 200,000 images.
+In total it took around 18 hours of training on a local Nvidia RTX 4070 Ti Super (16GB).
+**Tensorboard Logs**
 ![Training](/images/training.png)
 
 ## Things left to add:
 1. Joystick controls to improve accuracy.
-2. Capturing more data, ideally 1 million images, the model showed signs of improvement until the end.
-3. Write a bot to generate training data as it is tedious to play the same route over and over again.
-4. Give the model all 3 color channel input to improve accuracy.
-5. Reinforcement Learning. 
+2. Replace AlexNet Model with InceptionResNetV2 Model.
+3. Capturing more data, ideally 1 million images, the model showed signs of improvement until the end.
+4. Write a bot to generate training data as it is tedious to play the same route over and over again.
+5. Give the model all 3 color channel input to improve accuracy.
+6. Reinforcement Learning. 
 
 
 ## Installation
