@@ -12,8 +12,11 @@ Captured gameplay using python script found in `grabscreen.py`. Run `main.py` to
 I collected 200,000 images with their corresponding labels i.e keys `w`, `a`, `d`, `wa`, `wd`.
 
 ## Training
-The model was first trained using AlexNet model. Later found out `InceptionResNetV2` performs better and goes deeper to find the artifacts. I trained it on 200,000 images.
-In total it took around 18 hours of training on a local Nvidia RTX 4070 Ti Super (16GB).
+The model was first trained using AlexNet model. Later found out `InceptionResNetV2` performs better and goes deeper to find the artifacts. I trained it on 80,000 manually generated images.
+In total it took around 2 hours of training on a local Nvidia RTX 4070 Ti Super (16GB).
+
+## Pre-trained Model
+Trained NFS Most Wanted model: https://drive.google.com/file/d/1w0dz0DuLSFUyZmeK18SSDf32u70LbE_M/view?usp=sharing
 **Tensorboard Logs**
 ![Training](/images/training.png)
 
@@ -81,7 +84,3 @@ Code and software only runs on Windows, and is developed on Windows 11. Although
 
     
     ```
-
-## Pre-trained Model
-
-Checkpoint for a trained NFS Most Wanted: https://drive.google.com/file/d/1RRwhSMUrpBBRyAsfHLPGt1rlYFoiuus2/view?usp=sharing
