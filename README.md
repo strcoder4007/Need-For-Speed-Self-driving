@@ -18,12 +18,12 @@ In total it took around 18 hours of training on a local Nvidia RTX 4070 Ti Super
 ![Training](/images/training.png)
 
 ## Things left to add:
-1. Joystick controls to improve accuracy.
-2. Replace AlexNet Model with InceptionResNetV2 Model.
-3. Capturing more data, ideally 1 million images, the model showed signs of improvement until the end.
-4. Write a bot to generate training data as it is tedious to play the same route over and over again.
-5. Give the model all 3 color channel input to improve accuracy.
-6. Reinforcement Learning. 
+- [ ] Joystick controls to improve accuracy.
+- [x] Replace AlexNet Model with InceptionResNetV2 Model.
+- [ ] Capturing more data, ideally 1 million images, the model showed signs of improvement until the end.
+- [ ] Write a bot to generate training data as it is tedious to play the same route over and over again.
+- [x] Give the model all 3 color channel input to improve accuracy.
+- [ ] Reinforcement Learning. 
 
 ## Installation
 Code and software only runs on Windows, and is developed on Windows 11. Although after gathering data on Windows we can train on Linux, but the game runs natively on Windows, as do gamepads and virtual gamepads.
