@@ -5,6 +5,8 @@
 
 Making an AI which can play Need for Speed Most Wanted only by looking at the game, just like humans learn.
 
+Youtube: https://youtu.be/aJ91NBZnFdM
+
 ![Edge Detection](/images/nfsmw1.gif)
 
 ## Data Gathering
@@ -15,9 +17,10 @@ I collected 200,000 images with their corresponding labels i.e keys `w`, `a`, `d
 The model was first trained using AlexNet model. Later found out `InceptionResNetV2` performs better and goes deeper to find the artifacts. I trained it on 80,000 manually generated images.
 In total it took around 2 hours of training on a local Nvidia RTX 4070 Ti Super (16GB).
 
-## Pre-trained Model
+### Pre-trained Model
 Trained NFS Most Wanted model: https://drive.google.com/file/d/1w0dz0DuLSFUyZmeK18SSDf32u70LbE_M/view?usp=sharing
-**Tensorboard Logs**
+
+### Tensorboard Logs
 ![Training](/images/training.png)
 
 ## Things left to add:
